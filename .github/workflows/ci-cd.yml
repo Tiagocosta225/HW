@@ -37,7 +37,22 @@ jobs:
     - name: Install kubectl
       uses: azure/setup-kubectl@v1
 
+    - name: Configure kubectl
+      run: |
+        kubectl config set-cluster my-cluster --server=<CLUSTER_ENDPOINT> --certificate-authority=<CA_CERT>
+        kubectl config set-credentials my-user --token=<USER_TOKEN>
+        kubectl config set-context my-context --cluster=my-cluster --user=my-user
+        kubectl config use-context my-context
+      env:
+        CLUSTER_ENDPOINT: ${{ secrets.CLUSTER_ENDPOINT }}
+        CA_CERT: ${{ secrets.CA_CERT }}
+        USER_TOKEN: ${{ secrets.USER_TOKEN }}
+
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
+
+    - name: Verify cluster access
+      run: |
+        kubectl get nodes
