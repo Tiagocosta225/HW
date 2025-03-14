@@ -39,10 +39,14 @@ jobs:
 
     - name: Configure kubectl
       run: |
-        kubectl config set-cluster my-cluster 
-        kubectl config set-credentials my-user 
-        kubectl config set-context my-context 
+        kubectl config set-cluster my-cluster --server=${{ secrets.CLUSTER_ENDPOINT }} --certificate-authority=<(echo "${{ secrets.CA_CERT }}" | base64 --decode)
+        kubectl config set-credentials my-user --token=${{ secrets.USER_TOKEN }}
+        kubectl config set-context my-context --cluster=my-cluster --user=my-user
         kubectl config use-context my-context
+      env:
+        CLUSTER_ENDPOINT: ${{ secrets.CLUSTER_ENDPOINT }}
+        CA_CERT: ${{ secrets.CA_CERT }}
+        USER_TOKEN: ${{ secrets.USER_TOKEN }}
 
     - name: Deploy to Kubernetes
       run: |
