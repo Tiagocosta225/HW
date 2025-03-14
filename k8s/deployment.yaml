@@ -11,9 +11,9 @@ spec:
     metadata:
       labels:
         app: flask-app
-    spec:
+  spec:
       containers:  # Corrigido: indentação correta
         - name: flask-app
           image: tiagocosta225/flask-app:latest
           ports:
-        - containerPort: 5000
+          - containerPort: 5000
